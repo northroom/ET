@@ -29,39 +29,52 @@ namespace ETModel
 		/// </summary>
 		private readonly MultiMap<long, long> timeId = new MultiMap<long, long>();
 
-		private readonly List<long> timeOutId = new List<long>();
+		private readonly List<long> timeOutTime = new List<long>();
+
+		// 记录最小时间，不用每次都去MultiMap取第一个值
+		private long minTime;
 
 		public void Update()
 		{
+			if (this.timeId.Count == 0)
+			{
+				return;
+			}
+
 			long timeNow = TimeHelper.Now();
 
-			while (true)
+			if (timeNow < this.minTime)
 			{
-				if (this.timeId.Count <= 0)
+				return;
+			}
+			
+			this.timeOutTime.Clear();
+
+			foreach (KeyValuePair<long,List<long>> kv in this.timeId.GetDictionary())
+			{
+				long k = kv.Key;
+				if (k > timeNow)
 				{
-					return;
-				}
-				var kv = this.timeId.First();
-				if (kv.Key > timeNow)
-				{
+					minTime = k;
 					break;
 				}
+				this.timeOutTime.Add(k);
+			}
 
-				timeOutId.Clear();
-				timeOutId.AddRange(kv.Value);
-
-				this.timeId.Remove(kv.Key);
-				
-				foreach (long id in timeOutId)
+			foreach (long k in this.timeOutTime)
+			{
+				foreach (long v in this.timeId[k])
 				{
 					Timer timer;
-					if (!this.timers.TryGetValue(id, out timer))
+					if (!this.timers.TryGetValue(v, out timer))
 					{
 						continue;
 					}
-					this.timers.Remove(id);
+					this.timers.Remove(v);
 					timer.tcs.SetResult(true);
-				}				
+				}
+
+				this.timeId.Remove(k);
 			}
 		}
 
@@ -81,6 +94,10 @@ namespace ETModel
 			Timer timer = new Timer { Id = IdGenerater.GenerateId(), Time = tillTime, tcs = tcs };
 			this.timers[timer.Id] = timer;
 			this.timeId.Add(timer.Time, timer.Id);
+			if (timer.Time < this.minTime)
+			{
+				this.minTime = timer.Time;
+			}
 			cancellationToken.Register(() => { this.Remove(timer.Id); });
 			return tcs.Task;
 		}
@@ -91,6 +108,10 @@ namespace ETModel
 			Timer timer = new Timer { Id = IdGenerater.GenerateId(), Time = tillTime, tcs = tcs };
 			this.timers[timer.Id] = timer;
 			this.timeId.Add(timer.Time, timer.Id);
+			if (timer.Time < this.minTime)
+			{
+				this.minTime = timer.Time;
+			}
 			return tcs.Task;
 		}
 
@@ -100,6 +121,10 @@ namespace ETModel
 			Timer timer = new Timer { Id = IdGenerater.GenerateId(), Time = TimeHelper.Now() + time, tcs = tcs };
 			this.timers[timer.Id] = timer;
 			this.timeId.Add(timer.Time, timer.Id);
+			if (timer.Time < this.minTime)
+			{
+				this.minTime = timer.Time;
+			}
 			cancellationToken.Register(() => { this.Remove(timer.Id); });
 			return tcs.Task;
 		}
@@ -110,6 +135,10 @@ namespace ETModel
 			Timer timer = new Timer { Id = IdGenerater.GenerateId(), Time = TimeHelper.Now() + time, tcs = tcs };
 			this.timers[timer.Id] = timer;
 			this.timeId.Add(timer.Time, timer.Id);
+			if (timer.Time < this.minTime)
+			{
+				this.minTime = timer.Time;
+			}
 			return tcs.Task;
 		}
 	}

@@ -8,6 +8,7 @@
 	
 	message M2M_TrasferUnitResponse // IResponse
 	{
+		required int64 InstanceId = 1;
 	}
 	
 	message M2A_Reload // IRequest
@@ -44,7 +45,7 @@
 
 		required string CollectionName = 2;
 
-		required Component Component = 3;
+		required ComponentWithId Component = 3;
 	}
 
 
@@ -56,7 +57,7 @@
 	{
 		required bool NeedCache = 1;
 		required string CollectionName = 2;
-		repeated Component Components = 3;
+		repeated ComponentWithId Components = 3;
 	}
 
 	message DBSaveResponse // IResponse
@@ -72,7 +73,7 @@
 
 	message DBQueryResponse // IResponse
 	{
-		required Component Component = 1;
+		required ComponentWithId Component = 1;
 	}
 
 	message DBQueryBatchRequest // IRequest
@@ -84,25 +85,24 @@
 
 	message DBQueryBatchResponse // IResponse
 	{
-		repeated Component Components = 1;
+		repeated ComponentWithId Components = 1;
 	}
 
 	message DBQueryJsonRequest // IRequest
 	{
 		required string CollectionName = 1;
 		required string Json = 2;
-		required bool NeedCache = 3;
 	}
 
 	message DBQueryJsonResponse // IResponse
 	{
-		repeated Component Components = 1;
+		repeated ComponentWithId Components = 1;
 	}
 
 	message ObjectAddRequest // IRequest
 	{
 		required int64 Key = 1;
-		required int AppId = 2;
+		required int64 InstanceId = 2;
 	}
 
 	message ObjectAddResponse // IResponse
@@ -121,7 +121,7 @@
 	message ObjectLockRequest // IRequest
 	{
 		required int64 Key = 1;
-		required int LockAppId = 2;
+		required int64 InstanceId = 2;
 		required int Time = 3;
 	}
 
@@ -132,8 +132,8 @@
 	message ObjectUnLockRequest // IRequest
 	{
 		required int64 Key = 1;
-		required int UnLockAppId = 2;
-		required int AppId = 3;
+		required int64 OldInstanceId = 2;
+		required int64 InstanceId = 3;
 	}
 
 	message ObjectUnLockResponse // IResponse
@@ -147,7 +147,7 @@
 
 	message ObjectGetResponse // IResponse
 	{
-		required int AppId = 1;
+		required int64 InstanceId = 1;
 	}
 
 	message R2G_GetLoginKey // IRequest

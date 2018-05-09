@@ -39,14 +39,7 @@ namespace ETModel
 				return this.InstanceId == 0;
 			}
 		}
-
-
-		[BsonIgnoreIfDefault]
-		[BsonDefaultValue(0L)]
-		[BsonElement]
-		[BsonId]
-		public long Id { get; set; }
-
+		
 		[BsonIgnore]
 		public Component Parent { get; set; }
 
@@ -68,13 +61,6 @@ namespace ETModel
 		{
 			this.InstanceId = IdGenerater.GenerateId();
 			Game.EventSystem.Add(this);
-			this.Id = this.InstanceId;
-		}
-
-		protected Component(long instanceId)
-		{
-			this.InstanceId = instanceId;
-			Game.EventSystem.Add(this);
 		}
 
 		public virtual void Dispose()
@@ -93,8 +79,8 @@ namespace ETModel
 				Game.ObjectPool.Recycle(this);
 			}
 
-			// 触发Desdroy事件
-			Game.EventSystem.Desdroy(this);
+			// 触发Destroy事件
+			Game.EventSystem.Destroy(this);
 		}
 	}
 }

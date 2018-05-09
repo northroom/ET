@@ -1,11 +1,10 @@
-﻿using System;
-using ETModel;
+﻿using ETModel;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace ETHotfix
 {
 	[BsonIgnoreExtraElements]
-	public abstract partial class Component : Object, IDisposable2
+	public abstract partial class Component : Object, IDisposable
 	{
 		[BsonIgnore]
 		public long InstanceId { get; protected set; }
@@ -41,13 +40,6 @@ namespace ETHotfix
 			}
 		}
 
-
-		[BsonIgnoreIfDefault]
-		[BsonDefaultValue(0L)]
-		[BsonElement]
-		[BsonId]
-		public long Id { get; set; }
-
 		[BsonIgnore]
 		public Component Parent { get; set; }
 
@@ -69,13 +61,6 @@ namespace ETHotfix
 		{
 			this.InstanceId = IdGenerater.GenerateId();
 			Game.EventSystem.Add(this);
-			this.Id = this.InstanceId;
-		}
-
-		protected Component(long instanceId)
-		{
-			this.InstanceId = instanceId;
-			Game.EventSystem.Add(this);
 		}
 
 		public virtual void Dispose()
@@ -94,9 +79,8 @@ namespace ETHotfix
 				Game.ObjectPool.Recycle(this);
 			}
 
-
-			// 触发Desdroy事件
-			Game.EventSystem.Desdroy(this);
+			// 触发Destroy事件
+			Game.EventSystem.Destroy(this);
 		}
 	}
 }

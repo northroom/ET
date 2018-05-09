@@ -10,6 +10,8 @@ namespace ETModel
 		// 重用list
 		private readonly Queue<List<K>> queue = new Queue<List<K>>();
 
+		private T firstKey;
+
 		public SortedDictionary<T, List<K>> GetDictionary()
 		{
 			return this.dictionary;
@@ -30,6 +32,11 @@ namespace ETModel
 		public KeyValuePair<T, List<K>> First()
 		{
 			return this.dictionary.First();
+		}
+
+		public T FirstKey()
+		{
+			return this.dictionary.Keys.First();
 		}
 
 		public int Count

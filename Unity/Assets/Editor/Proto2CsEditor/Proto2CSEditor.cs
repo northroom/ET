@@ -5,7 +5,7 @@ using System.Text;
 using ETModel;
 using UnityEditor;
 
-namespace MyEditor
+namespace ETEditor
 {
 	class OpcodeInfo
 	{
@@ -23,10 +23,10 @@ namespace MyEditor
 	
 	public class Proto2CSEditor : EditorWindow
 	{
-		private const string protoPath = @"..\Proto\";
-		private const string serverMessagePath = @"..\Server\Model\Module\Message\";
-		private const string clientMessagePath = @"Assets\Scripts\Module\Message\";
-		private const string hotfixMessagePath = @"Hotfix\Module\Message\";
+		private const string protoPath = "../Proto/";
+		private const string serverMessagePath = "../Server/Hotfix/Module/Message/";
+		private const string clientMessagePath = "Assets/Scripts/Module/Message/";
+		private const string hotfixMessagePath = "Hotfix/Module/Message/";
 		private static readonly char[] splitChars = { ' ', '\t' };
 		private static readonly List<OpcodeInfo> msgOpcode = new List<OpcodeInfo>();
 		private static MultiMap<string, string> parentMsg = new MultiMap<string, string>();
@@ -36,22 +36,22 @@ namespace MyEditor
 		{
 			msgOpcode.Clear();
 			Proto2CS("ETModel", "OuterMessage.proto", clientMessagePath, "OuterOpcode", 100, HeadFlag.Proto);
-			GenerateOpcode("OuterOpcode", clientMessagePath);
+			GenerateOpcode("ETModel", "OuterOpcode", clientMessagePath);
 
-			Proto2CS("ETModel", "OuterMessage.proto", serverMessagePath, "OuterOpcode", 100, HeadFlag.Proto | HeadFlag.Bson, false);
-			GenerateOpcode("OuterOpcode", serverMessagePath);
+			Proto2CS("ETHotfix", "OuterMessage.proto", serverMessagePath, "OuterOpcode", 100, HeadFlag.Proto | HeadFlag.Bson, false);
+			GenerateOpcode("ETHotfix", "OuterOpcode", serverMessagePath);
 
 			msgOpcode.Clear();
 			Proto2CS("ETHotfix", "HotfixMessage.proto", hotfixMessagePath, "HotfixOpcode", 10000, HeadFlag.None);
-			GenerateOpcode("HotfixOpcode", hotfixMessagePath);
+			GenerateOpcode("ETHotfix", "HotfixOpcode", hotfixMessagePath);
 
 			msgOpcode.Clear();
-			Proto2CS("ETModel", "HotfixMessage.proto", serverMessagePath, "HotfixOpcode", 10000, HeadFlag.Bson, false);
-			GenerateOpcode("HotfixOpcode", serverMessagePath);
+			Proto2CS("ETHotfix", "HotfixMessage.proto", serverMessagePath, "HotfixOpcode", 10000, HeadFlag.Bson, false);
+			GenerateOpcode("ETHotfix", "HotfixOpcode", serverMessagePath);
 
 			msgOpcode.Clear();
-			Proto2CS("ETModel", "InnerMessage.proto", serverMessagePath, "InnerOpcode", 1000, HeadFlag.Bson, false);
-			GenerateOpcode("InnerOpcode", serverMessagePath);
+			Proto2CS("ETHotfix", "InnerMessage.proto", serverMessagePath, "InnerOpcode", 1000, HeadFlag.Bson, false);
+			GenerateOpcode("ETHotfix", "InnerOpcode", serverMessagePath);
 
 			AssetDatabase.Refresh();
 		}
@@ -229,10 +229,10 @@ namespace MyEditor
 			}
 		}
 		
-		private static void GenerateOpcode(string outputFileName, string outputPath)
+		private static void GenerateOpcode(string ns, string outputFileName, string outputPath)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("namespace ETModel");
+			sb.AppendLine($"namespace {ns}");
 			sb.AppendLine("{");
 			sb.AppendLine($"\tpublic static partial class {outputFileName}");
 			sb.AppendLine("\t{");

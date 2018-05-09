@@ -24,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,10 +38,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assets\CSharp vNext Support\AsyncTools\Plugins\System.Threading.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>C:\Apps\Unity\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -56,6 +53,8 @@
     <Compile Include="Base\Helper\ExceptionHelper.cs" />
     <Compile Include="Base\Helper\JsonHelper.cs" />
     <Compile Include="Base\Helper\Log.cs" />
+    <Compile Include="Base\Object\ComponentWithId.cs" />
+    <Compile Include="Base\Object\IChangeSystem.cs" />
     <Compile Include="Base\Object\IDestroySystem.cs" />
     <Compile Include="Base\Object\IStartSystem.cs" />
     <Compile Include="Module\FrameSync\OperaComponent.cs" />
